@@ -1,20 +1,21 @@
 var request = require('request'); //Set Global Vars
+require('dotenv').config();
 var fs = require('fs');
-var GITHUB_USER = "moogsG";
-var GITHUB_TOKEN = "ee33c2e1000e6db8b1c68756fa90a9c7dbb0c374";
 var args = process.argv.slice(2);
+
+
 console.log('Welcome to the GitHub Avatar Downloader!');
 
 
 function getRepoContributors(repoOwner, repoName, cb) {
 
-  var requestURL = 'https://' + GITHUB_USER + ':' + GITHUB_TOKEN + '@api.github.com/repos/' + repoOwner + '/' + repoName + '/contributors';
+  var requestURL = 'https://' + process.env.DB_GITHUB_USER + ':' + process.env.DB_GITHUB_TOKEN + '@api.github.com/repos/' + repoOwner + '/' + repoName + '/contributors';
   var error = 'None!';
   var obj = '';
   var options = {
     url: requestURL,
     headers: {
-      'User-Agent': 'moogsG' //User agent for header
+      'User-Agent': process.env.DB_GITHUB_USER //User agent for header
     }
   };
 
