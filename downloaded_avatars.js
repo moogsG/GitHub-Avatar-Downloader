@@ -1,67 +1,72 @@
-var request = require('request');
+var request = require('request'); //Set Global Vars
 var fs = require('fs');
 var GITHUB_USER = "moogsG";
 var GITHUB_TOKEN = "ee33c2e1000e6db8b1c68756fa90a9c7dbb0c374";
-
+var args = process.argv.slice(2);
 console.log('Welcome to the GitHub Avatar Downloader!');
+
+
 function getRepoContributors(repoOwner, repoName, cb) {
 
   var requestURL = 'https://' + GITHUB_USER + ':' + GITHUB_TOKEN + '@api.github.com/repos/' + repoOwner + '/' + repoName + '/contributors';
   var error = 'None!';
-  var result = '';
-  var imgURL = '';
-  var path = '';
+  var obj = '';
   var options = {
     url: requestURL,
     headers: {
-      'User-Agent': 'moogsG'
+      'User-Agent': 'moogsG' //User agent for header
     }
   };
 
-  request.get(options)
-    .on('error', function(err){
+  request.get(options) // starts GET request
+    .on('error', function(err) {
       error = err;
     })
-    .on('response', function(response){
+    .on('response', function(response) { // GET response, set encoding to utf8
       response.setEncoding('utf8');
-      console.log('Response Status Code: ', response.statusCode);
-      console.log('Response Message: ', response.statusMessage);
-      console.log('Response Content Type: ', response.headers['content-type']);
+      console.log('Found repo, generating avatars..');
     })
-    .on('data', function(data){
-       result += data;
-
-       //console.log(data);
-
+    .on('data', function(data) { // Adds all chunks to obj
+      obj += data;
     })
     .on('end', function() {
-      result = JSON.parse(result);
-      return cb(error, result);
+      obj = JSON.parse(obj); // Turns obj into a JSON object
+      return cb(error, obj);
     });
 }
 
 function downloadImageByURL(url, filePath) {
-  request.get(url)
-    .on('error', function(err){
+  request.get(url) //Starts get request for img
+    .on('error', function(err) {
       throw err;
     })
-    .on('response', function(response){
-      console.log('Response Status Code: ', response.statusCode);
-      console.log('Response Message: ', response.statusMessage);
-      console.log('Response Content Type: ', response.headers['content-type']);
-    })
-  .pipe(fs.createWriteStream('./avatars/' + filePath));
+    .on('response', function(response) {})
 
+  .pipe(fs.createWriteStream('./avatars/' + filePath)); //Starts write stream to avatar folder, and creates file.
 }
 
-getRepoContributors(process.argv[2], process.argv[3], function(err, result, path) {
-  for(var key in result) {
-
+function checkArgs(args) { //validates arguments
+  if (args.length === 2) {
+    console.log('Taking aguments and looking for repo..');
+    var owner = process.argv[2];
+    var repo = process.argv[3];
+    getRepoContributors(owner, repo, function(err, result, path) { // Takes two arguments from terminal, sends callback as well.
+      console.log('Downloading Avatars...');
+      for (var key in result) {
         if (result.hasOwnProperty(key)) {
-          downloadImageByURL(result[key]['avatar_url'], result[key]['login']);
+          downloadImageByURL(result[key]['avatar_url'], result[key]['login']); //sends avatar URL and login to downloadIMG function
         }
       }
 
-  console.log("Errors:", err);
-});
+      console.log('Success! Images downloaded to "/avatars" !');
+      console.log("Errors:", err); // will log errors if this fails
 
+    });
+
+  } else {
+    console.log('Error! Wrong number of arguments!');
+  }
+}
+
+
+checkArgs(args); //Runs app
