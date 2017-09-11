@@ -50,11 +50,11 @@ function downloadImageByURL(url, filePath) {
       console.log('Response Message: ', response.statusMessage);
       console.log('Response Content Type: ', response.headers['content-type']);
     })
-  .pipe(fs.createWriteStream('./avatars' + filePath));
+  .pipe(fs.createWriteStream('./avatars/' + filePath));
 
 }
 
-getRepoContributors("jquery", "jquery", function(err, result, path) {
+getRepoContributors(process.argv[2], process.argv[3], function(err, result, path) {
   for(var key in result) {
 
         if (result.hasOwnProperty(key)) {
@@ -63,5 +63,5 @@ getRepoContributors("jquery", "jquery", function(err, result, path) {
       }
 
   console.log("Errors:", err);
-  console.log("Result:", result);
 });
+
