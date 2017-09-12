@@ -1,15 +1,16 @@
 var request = require('request'); //Set Global Vars
+  require('dotenv').config();
 var fs = require('fs');
-
+var args = process.argv.slice(2);
+var error = false;
+var fileEXT = '';
+var obj = '';
 console.log('Welcome to the GitHub Avatar Downloader!');
 
 function getRepoContributors(repoOwner, repoName, cb) {
-  require('dotenv').config(); //Set Local vars
+ //Set Local vars
 
-  var args = process.argv.slice(2);
-  var error = false;
-  var fileEXT = '';
-  var obj = '';
+
   var requestURL = 'https://' + process.env.DB_GITHUB_USER + ':' + process.env.DB_GITHUB_TOKEN + '@api.github.com/repos/' + repoOwner + '/' + repoName + '/contributors';
   var options = {
     url: requestURL,
