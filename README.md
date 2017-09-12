@@ -10,4 +10,4 @@ This program should be executed from the command line, in the following manner:
 
 `node download_avatars.js jquery jquery`
 
-... (whatever else you'd like to include)
+## To run this project -- requires file called '.env' with Access Token.
